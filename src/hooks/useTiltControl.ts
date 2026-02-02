@@ -5,38 +5,33 @@ export function useTiltControl() {
 
 	useEffect(() => {
 		const handleMotion = (e: DeviceMotionEvent) => {
-			const x = e.accelerationIncludingGravity?.x ?? 0
+			const acc = e.accelerationIncludingGravity
+			if (!acc) return
 
+			const { y, z } = acc
 
-			// map tilt → steering
-			let steering = Math.round(x * 20)
-			if (Math.abs(steering) < 5) steering = 0
+			if (y === null || z === null) return
 
-			steering = Math.max(-100, Math.min(100, steering))
+			// roll relative to landscape (horizontal tilt)
+			let roll = Math.atan2(y, z) * (180 / Math.PI) // degrees
 
-			setMovement(m => ({
-				...m,
-				x: steering
-			}))
+			// clamp roll to [-30, 30]
+			if (roll > 30) roll = 30
+			if (roll < -30) roll = -30
+
+			// map [-30,30] → [-100,100]
+			const steering = Math.round((roll / 30) * 100)
+
+			setMovement(m => ({ ...m, x: steering }))
 		}
 
 		window.addEventListener('devicemotion', handleMotion)
 		return () => window.removeEventListener('devicemotion', handleMotion)
 	}, [])
 
-	const forward = () =>
-		setMovement(m => ({ ...m, y: 100 }))
+	const forward = () => setMovement(m => ({ ...m, y: 100 }))
+	const backward = () => setMovement(m => ({ ...m, y: -100 }))
+	const stop = () => setMovement(m => ({ ...m, y: 0 }))
 
-	const backward = () =>
-		setMovement(m => ({ ...m, y: -100 }))
-
-	const stop = () =>
-		setMovement(m => ({ ...m, y: 0 }))
-
-	return {
-		movement,
-		forward,
-		backward,
-		stop
-	}
+	return { movement, forward, backward, stop }
 }
