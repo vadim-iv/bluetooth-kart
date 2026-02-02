@@ -3,6 +3,7 @@
 import { useBleMovementSender } from '@/hooks/useBleMovementSender'
 import { useTiltControl } from '@/hooks/useTiltControl'
 import { ArrowBigUp } from 'lucide-react'
+import { useEffect } from 'react'
 
 interface TiltControlProps {
 	back: () => void
@@ -16,6 +17,23 @@ export function TiltControl({ back, characteristic }: TiltControlProps) {
 		movement,
 		characteristic
 	})
+
+	useEffect(() => {
+		if (screen.orientation && screen.orientation.lock) {
+			screen.orientation
+				.lock('landscape')
+				.then(() => console.log('Locked to landscape'))
+				.catch(err => console.error('Lock failed:', err))
+		} else {
+			console.log('Orientation lock not supported')
+		}
+
+		return () => {
+			if (screen.orientation && screen.orientation.unlock) {
+				screen.orientation.unlock()
+			}
+		}
+	}, [])
 
 	const requestPermission = async () => {
 		// iOS permission
@@ -53,7 +71,9 @@ export function TiltControl({ back, characteristic }: TiltControlProps) {
 				</div>
 			</div>
 
-			<p className='opacity-50 select-none'>Steering: {movement.x.toFixed(2)}, Throttle: {movement.y.toFixed(2)}</p>
+			<p className='opacity-50 select-none'>
+				Steering: {movement.x.toFixed(2)}, Throttle: {movement.y.toFixed(2)}
+			</p>
 
 			<div className='flex gap-3'>
 				<button
