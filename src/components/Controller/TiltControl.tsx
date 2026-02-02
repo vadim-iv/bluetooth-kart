@@ -27,7 +27,7 @@ export function TiltControl({ back, characteristic }: TiltControlProps) {
 	}
 
 	return (
-		<div className='flex flex-col items-center gap-4'>
+		<div className='flex flex-col items-center md:gap-4 gap-2'>
 			<button
 				onClick={requestPermission}
 				className='px-2 py-0.25 bg-[#ffffff10] hover:bg-[#ffffff20] text-[#ffffff85] cursor-pointer transition-colors duration-300 rounded-md'
@@ -35,7 +35,7 @@ export function TiltControl({ back, characteristic }: TiltControlProps) {
 				Enable tilt control
 			</button>
 
-			<div className='flex gap-4'>
+			<div className='flex gap-6'>
 				<div
 					className={`transition-opacity duration-300 size-4 bg-[#ffffff20] ${
 						movement.x < 0 ? 'opacity-100' : 'opacity-65'
@@ -53,7 +53,7 @@ export function TiltControl({ back, characteristic }: TiltControlProps) {
 				</div>
 			</div>
 
-			<div className='flex gap-3'>
+			<div className='flex gap-6'>
 				<button
 					onTouchStart={forward}
 					onTouchEnd={stop}
