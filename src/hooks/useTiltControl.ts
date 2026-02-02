@@ -1,46 +1,42 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export function useTiltControl() {
-  const [movement, setMovement] = useState({ x: 0, y: 0 })
-  const baselineRef = useRef(0)
-  const lastBetaRef = useRef(0)
+	const [movement, setMovement] = useState({ x: 0, y: 0 })
 
-  useEffect(() => {
-    const handleOrientation = (e: DeviceOrientationEvent) => {
-      const beta = e.beta ?? 0
-      lastBetaRef.current = beta
+	useEffect(() => {
+		const handleMotion = (e: DeviceMotionEvent) => {
+			const x = e.accelerationIncludingGravity?.x ?? 0
 
-      // adjusted: current beta minus baseline (calibrated horizontal)
-      let adjusted = beta - baselineRef.current
-      if (adjusted > 180) adjusted -= 360
-      if (adjusted < -180) adjusted += 360
-      adjusted = Math.max(-90, Math.min(90, adjusted))
 
-      // map adjusted (-90..90) → steering (-100..100)
-      let steering = Math.round((adjusted / 90) * 100)
-      if (Math.abs(steering) < 5) steering = 0
-      steering = Math.max(-100, Math.min(100, steering))
+			// map tilt → steering
+			let steering = Math.round(x * 20)
+			if (Math.abs(steering) < 5) steering = 0
 
-      setMovement(m => ({ ...m, x: steering }))
-    }
+			steering = Math.max(-100, Math.min(100, steering))
 
-    window.addEventListener('deviceorientation', handleOrientation)
-    return () => window.removeEventListener('deviceorientation', handleOrientation)
-  }, [])
+			setMovement(m => ({
+				...m,
+				x: steering
+			}))
+		}
 
-  const setHorizontal = () => {
-    baselineRef.current = lastBetaRef.current
-  }
+		window.addEventListener('devicemotion', handleMotion)
+		return () => window.removeEventListener('devicemotion', handleMotion)
+	}, [])
 
-  const forward = () => setMovement(m => ({ ...m, y: 100 }))
-  const backward = () => setMovement(m => ({ ...m, y: -100 }))
-  const stop = () => setMovement(m => ({ ...m, y: 0 }))
+	const forward = () =>
+		setMovement(m => ({ ...m, y: 100 }))
 
-  return {
-    movement,
-    forward,
-    backward,
-    stop,
-    setHorizontal
-  }
+	const backward = () =>
+		setMovement(m => ({ ...m, y: -100 }))
+
+	const stop = () =>
+		setMovement(m => ({ ...m, y: 0 }))
+
+	return {
+		movement,
+		forward,
+		backward,
+		stop
+	}
 }
