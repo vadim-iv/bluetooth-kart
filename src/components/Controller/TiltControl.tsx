@@ -10,10 +10,6 @@ interface TiltControlProps {
 	characteristic: BluetoothRemoteGATTCharacteristic | null
 }
 
-interface ScreenOrientationWithLock extends ScreenOrientation {
-	lock: (orientation: OrientationLockType) => Promise<void>
-}
-
 export function TiltControl({ back, characteristic }: TiltControlProps) {
 	const { movement, forward, backward, stop } = useTiltControl()
 
@@ -23,12 +19,13 @@ export function TiltControl({ back, characteristic }: TiltControlProps) {
 	})
 
 	useEffect(() => {
-		const orientation = screen.orientation as ScreenOrientationWithLock
+		const orientation = screen.orientation as any
 		if (orientation?.lock) {
 			orientation
 				.lock('landscape')
 				.then(() => console.log('Locked to landscape'))
-				.catch(console.error)
+				// @ts-expect-error any error type
+				.catch((err) => console.error(err))
 		}
 	}, [])
 
