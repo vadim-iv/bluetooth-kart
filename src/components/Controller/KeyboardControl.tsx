@@ -11,7 +11,6 @@ interface KeyboardControlProps {
 
 export function KeyboardControl({ back, characteristic }: KeyboardControlProps) {
 	const { movement } = useKeyboardControl()
-
 	useBleMovementSender({
 		movement,
 		characteristic

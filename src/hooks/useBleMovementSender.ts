@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { MoveVector } from '@/types/control'
 
 interface Props {
@@ -12,8 +12,6 @@ export function useBleMovementSender({
 	characteristic,
 	intervalMs = 40
 }: Props) {
-	const lastSent = useRef<MoveVector>({ x: 0, y: 0 })
-
 	useEffect(() => {
 		if (!characteristic) return
 
@@ -21,15 +19,11 @@ export function useBleMovementSender({
 
 		const timer = setInterval(async () => {
 			// skip if unchanged
-			if (movement.x === lastSent.current.x && movement.y === lastSent.current.y) {
-				return
-			}
 
-			const command = `MOVE:${movement.x},${movement.y}\n`
-
+			const command = `${movement.x};${movement.y}\n`
+			console.log('Sending BLE command:', command.trim())
 			try {
 				await characteristic.writeValue(encoder.encode(command))
-				lastSent.current = movement
 			} catch (err) {
 				console.error('BLE send failed', err)
 			}
