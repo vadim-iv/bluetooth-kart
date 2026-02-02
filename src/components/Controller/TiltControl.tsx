@@ -3,7 +3,6 @@
 import { useBleMovementSender } from '@/hooks/useBleMovementSender'
 import { useTiltControl } from '@/hooks/useTiltControl'
 import { ArrowBigUp } from 'lucide-react'
-import { useEffect } from 'react'
 
 interface TiltControlProps {
 	back: () => void
@@ -17,17 +16,6 @@ export function TiltControl({ back, characteristic }: TiltControlProps) {
 		movement,
 		characteristic
 	})
-
-	useEffect(() => {
-		const orientation = screen.orientation as any
-		if (orientation?.lock) {
-			orientation
-				.lock('landscape')
-				.then(() => console.log('Locked to landscape'))
-				// @ts-expect-error any error type
-				.catch((err) => console.error(err))
-		}
-	}, [])
 
 	const requestPermission = async () => {
 		// iOS permission
