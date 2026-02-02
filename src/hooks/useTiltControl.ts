@@ -1,45 +1,42 @@
 import { useEffect, useState } from 'react'
 
 export function useTiltControl() {
-  const [movement, setMovement] = useState({ x: 0, y: 0 })
+	const [movement, setMovement] = useState({ x: 0, y: 0 })
 
-  useEffect(() => {
-    const handleMotion = (e: DeviceMotionEvent) => {
-      const acc = e.accelerationIncludingGravity
-      if (!acc) return
+	useEffect(() => {
+		const handleMotion = (e: DeviceMotionEvent) => {
+			const x = e.accelerationIncludingGravity?.x ?? 0
 
-      const { x, y, z } = acc
 
-	  if (x === null || y === null || z === null) return
+			// map tilt → steering
+			let steering = Math.round(x * 20)
+			if (Math.abs(steering) < 5) steering = 0
 
-      // compute tilt angle relative to horizontal plane
-      const tiltX = Math.atan2(x, Math.sqrt(y * y + z * z)) // radians
-      let steering = Math.round((tiltX * 180) / Math.PI) // convert to degrees
+			steering = Math.max(-100, Math.min(100, steering))
 
-      // apply deadzone
-      if (Math.abs(steering) < 5) steering = 0
+			setMovement(m => ({
+				...m,
+				x: steering
+			}))
+		}
 
-      // clamp to [-100, 100]
-      steering = Math.max(-100, Math.min(100, steering))
+		window.addEventListener('devicemotion', handleMotion)
+		return () => window.removeEventListener('devicemotion', handleMotion)
+	}, [])
 
-      setMovement(m => ({
-        ...m,
-        x: steering
-      }))
-    }
+	const forward = () =>
+		setMovement(m => ({ ...m, y: 100 }))
 
-    window.addEventListener('devicemotion', handleMotion)
-    return () => window.removeEventListener('devicemotion', handleMotion)
-  }, [])
+	const backward = () =>
+		setMovement(m => ({ ...m, y: -100 }))
 
-  const forward = () => setMovement(m => ({ ...m, y: 100 }))
-  const backward = () => setMovement(m => ({ ...m, y: -100 }))
-  const stop = () => setMovement(m => ({ ...m, y: 0 }))
+	const stop = () =>
+		setMovement(m => ({ ...m, y: 0 }))
 
-  return {
-    movement,
-    forward,
-    backward,
-    stop
-  }
+	return {
+		movement,
+		forward,
+		backward,
+		stop
+	}
 }
