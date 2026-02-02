@@ -72,7 +72,7 @@ export function TiltControl({ back, characteristic }: TiltControlProps) {
                 Enable tilt control
             </TouchableButton>
 
-            <div className='flex gap-6'>
+            <div className='flex gap-4'>
                 <TouchableButton
                     onTouchStart={forward}
                     onTouchEnd={stop}
