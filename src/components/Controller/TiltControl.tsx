@@ -35,7 +35,7 @@ export function TiltControl({ back, characteristic }: TiltControlProps) {
 				Enable tilt control
 			</button>
 
-			<div className='flex gap-6'>
+			{/* <div className='flex gap-6'>
 				<div
 					className={`transition-opacity duration-300 size-4 bg-[#ffffff20] ${
 						movement.x < 0 ? 'opacity-100' : 'opacity-65'
@@ -51,7 +51,7 @@ export function TiltControl({ back, characteristic }: TiltControlProps) {
 				>
 					<ArrowBigUp className='size-1.25 rotate-90' />
 				</div>
-			</div>
+			</div> */}
 
 			<div className='flex gap-6'>
 				<button
