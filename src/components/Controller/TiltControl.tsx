@@ -53,6 +53,8 @@ export function TiltControl({ back, characteristic }: TiltControlProps) {
 				</div>
 			</div>
 
+			<p className='opacity-50 select-none'>Steering: {movement.x.toFixed(2)}, Throttle: {movement.y.toFixed(2)}</p>
+
 			<div className='flex gap-3'>
 				<button
 					onTouchStart={forward}
