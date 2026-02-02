@@ -10,7 +10,7 @@ export function useTiltControl() {
 
 			// map tilt → steering
 			let steering = Math.round(x * 20)
-			if (Math.abs(steering) < 5) steering = 0
+			if (Math.abs(steering) < 15) steering = 0
 
 			steering = Math.max(-100, Math.min(100, steering))
 
