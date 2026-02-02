@@ -30,7 +30,7 @@ function TouchableButton(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
         onMouseUp?.(e)
     }
 
-    const pressedClass = pressed ? 'bg-[#ffffff20]' : ''
+    const pressedClass = pressed ? 'bg-[#ffffff20] select-none' : ''
 
     return (
         <button
@@ -64,7 +64,7 @@ export function TiltControl({ back, characteristic }: TiltControlProps) {
     }
 
     return (
-        <div className='flex flex-col items-center md:gap-4 gap-2'>
+        <div className='flex flex-col items-center md:gap-4 gap-2 width-full height-full justify-center'>
             <TouchableButton
                 onClick={requestPermission}
                 className='px-2 py-0.25 bg-[#ffffff10] hover:bg-[#ffffff20] text-[#ffffff85] cursor-pointer transition-colors duration-300 rounded-md'
