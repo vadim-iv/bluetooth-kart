@@ -1,51 +1,42 @@
 import { useEffect, useState } from 'react'
 
 export function useTiltControl() {
-  const [movement, setMovement] = useState({ x: 0, y: 0 })
+	const [movement, setMovement] = useState({ x: 0, y: 0 })
 
-  useEffect(() => {
-    // baseline gravity vector for landscape (y, z)
-    let baseY: number | null = null
-    let baseZ: number | null = null
+	useEffect(() => {
+		let baselineX: number | null = null // store flat landscape X value
 
-    const handleMotion = (e: DeviceMotionEvent) => {
-      const acc = e.accelerationIncludingGravity
-      if (!acc) return
+		const handleMotion = (e: DeviceMotionEvent) => {
+			const x = e.accelerationIncludingGravity?.x ?? 0
 
-      const { y, z } = acc
+			// initialize baseline on first reading
+			if (baselineX === null) {
+				baselineX = x
+				return // skip first reading
+			}
 
-	  if (y === null || z === null) return
+			// compute relative tilt from baseline
+			let steering = Math.round((x - baselineX) * 20)
 
-      // on first event, store the baseline for landscape flat
-      if (baseY === null || baseZ === null) {
-        baseY = y
-        baseZ = z
-        return
-      }
+			// deadzone for small shakes
+			if (Math.abs(steering) < 5) steering = 0
 
-      // calculate roll relative to baseline
-      const dy = y - baseY
-      const dz = z - baseZ
+			// clamp to [-100, 100]
+			steering = Math.max(-100, Math.min(100, steering))
 
-      let roll = Math.atan2(dy, dz) * (180 / Math.PI) // degrees
+			setMovement(m => ({
+				...m,
+				x: steering
+			}))
+		}
 
-      // clamp roll to [-30, 30]
-      if (roll > 30) roll = 30
-      if (roll < -30) roll = -30
+		window.addEventListener('devicemotion', handleMotion)
+		return () => window.removeEventListener('devicemotion', handleMotion)
+	}, [])
 
-      // map [-30, 30] → [-100, 100]
-      const steering = Math.round((roll / 30) * 100)
+	const forward = () => setMovement(m => ({ ...m, y: 100 }))
+	const backward = () => setMovement(m => ({ ...m, y: -100 }))
+	const stop = () => setMovement(m => ({ ...m, y: 0 }))
 
-      setMovement(m => ({ ...m, x: steering }))
-    }
-
-    window.addEventListener('devicemotion', handleMotion)
-    return () => window.removeEventListener('devicemotion', handleMotion)
-  }, [])
-
-  const forward = () => setMovement(m => ({ ...m, y: 100 }))
-  const backward = () => setMovement(m => ({ ...m, y: -100 }))
-  const stop = () => setMovement(m => ({ ...m, y: 0 }))
-
-  return { movement, forward, backward, stop }
+	return { movement, forward, backward, stop }
 }
