@@ -1,26 +1,56 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --spacing: 1rem;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply bg-[#181818] text-white;
+}
+
+.ping-animation {
+  @apply relative;
+}
+
+.ping-animation::after {
+  content: '';
+  @apply absolute inset-0 rounded-full border border-white opacity-30;
+  animation: ping-custom 3s infinite;
+}
+
+.ping-animation::before {
+  content: '';
+  @apply absolute inset-0 rounded-full border border-white opacity-30;
+  animation: ping-custom 3s infinite;
+  animation-delay: 0.25s;
+}
+
+@keyframes ping-custom {
+  0% {
+    transform: scale(1.1);
+    opacity: 0.3;
+  }
+  42.857% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+
+.spinner {
+  width: 8rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: 
+    radial-gradient(farthest-side,#ffffff 50%,#0000) top/0.25rem 0.25rem no-repeat,
+    conic-gradient(#0000 30%,#ffffff);
+  -webkit-mask: radial-gradient(farthest-side,#0000 calc(100% - 0.25rem),#000 0);
+  animation: l13 1s infinite linear;
+}
+@keyframes l13{ 
+  100%{transform: rotate(1turn)}
 }
