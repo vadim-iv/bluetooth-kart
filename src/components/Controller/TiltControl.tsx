@@ -94,6 +94,9 @@ export function TiltControl({ back, characteristic }: TiltControlProps) {
                 </TouchableButton>
             </div>
 
+            {/* Show x and y */}
+            <p>X: {movement.x} Y: {movement.y}</p>
+
             <div className='flex flex-col items-center gap-1'>
                 <p className='opacity-50 select-none'>Tilt phone to steer, buttons for throttle</p>
                 <TouchableButton
