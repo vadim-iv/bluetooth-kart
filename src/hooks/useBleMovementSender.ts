@@ -18,12 +18,10 @@ export function useBleMovementSender({
 		const encoder = new TextEncoder()
 
 		const timer = setInterval(async () => {
-			// skip if unchanged
-
-			const command = `${movement.x};${movement.y}\n`
+			const command = `MOVE:${movement.x},${movement.y}\n`
 			console.log('Sending BLE command:', command.trim())
 			try {
-				await characteristic.writeValue(encoder.encode(command))
+				await characteristic.writeValueWithoutResponse(encoder.encode(command))
 			} catch (err) {
 				console.error('BLE send failed', err)
 			}
