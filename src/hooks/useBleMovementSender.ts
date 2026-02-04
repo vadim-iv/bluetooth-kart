@@ -18,7 +18,7 @@ export function useBleMovementSender({
 		const encoder = new TextEncoder()
 
 		const timer = setInterval(async () => {
-			const command = `MOVE:${movement.x},${movement.y}\n`
+			const command = `MOVE:${movement.x},${movement.y},${movement.break}\n`
 			console.log('Sending BLE command:', command.trim())
 			try {
 				await characteristic.writeValueWithoutResponse(encoder.encode(command))

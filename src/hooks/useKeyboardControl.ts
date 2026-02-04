@@ -6,32 +6,35 @@ export interface KeyState {
 	down: boolean
 	left: boolean
 	right: boolean
+	break: boolean
 }
 
 const INITIAL_KEYS: KeyState = {
 	up: false,
 	down: false,
 	left: false,
-	right: false
+	right: false,
+	break: false
 }
 
 export function useKeyboardControl() {
 	const [keys, setKeys] = useState<KeyState>(INITIAL_KEYS)
-	const [movement, setMovement] = useState<MoveVector>({ x: 0, y: 0 })
+	const [movement, setMovement] = useState<MoveVector>({ x: 0, y: 0, break: 0 })
 
 	useEffect(() => {
 		const updateMovement = (state: KeyState) => {
 			const x = (state.right ? 1 : 0) - (state.left ? 1 : 0)
 			const y = (state.up ? 1 : 0) - (state.down ? 1 : 0)
-
+			const brk = state.break ? 1 : 0
 			setMovement({
 				x: x * 100,
-				y: y * 100
+				y: y * 100,
+				break: brk
 			})
 		}
 
 		const onKeyDown = (e: KeyboardEvent) => {
-			if (e.key.startsWith('Arrow')) e.preventDefault()
+			if (e.key.startsWith('Arrow') || e.key === " ") e.preventDefault()
 
 			setKeys(prev => {
 				const next = { ...prev }
@@ -48,6 +51,9 @@ export function useKeyboardControl() {
 						break
 					case 'ArrowRight':
 						next.right = true
+						break
+					case ' ':
+						next.break = true
 						break
 					default:
 						return prev
@@ -75,6 +81,9 @@ export function useKeyboardControl() {
 					case 'ArrowRight':
 						next.right = false
 						break
+					case ' ':
+						next.break = false
+						break
 					default:
 						return prev
 				}
@@ -98,6 +107,7 @@ export function useKeyboardControl() {
 		up: keys.up,
         down: keys.down,
         left: keys.left,
-        right: keys.right
+        right: keys.right,
+        break: keys.break
 	}
 }

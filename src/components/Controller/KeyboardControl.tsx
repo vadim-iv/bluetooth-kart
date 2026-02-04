@@ -2,7 +2,7 @@
 
 import { useBleMovementSender } from '@/hooks/useBleMovementSender'
 import { useKeyboardControl } from '@/hooks/useKeyboardControl'
-import { ArrowBigUp } from 'lucide-react'
+import { ArrowBigUp, Space } from 'lucide-react'
 
 interface KeyboardControlProps {
 	back: () => void
@@ -45,6 +45,13 @@ export function KeyboardControl({ back, characteristic }: KeyboardControlProps) 
 						className={`transition-opacity duration-300 size-4 bg-[#ffffff20] ${movement.x > 0 ? 'opacity-100' : 'opacity-65'} rounded-lg flex items-center justify-center`}
 					>
 						<ArrowBigUp className='size-1.25 rotate-90' />
+					</div>
+				</div>
+				<div className='col-span-3'>
+					<div
+						className={`transition-opacity w-full duration-300 size-4 bg-[#ffffff20] ${movement.break === 1 ? 'opacity-100' : 'opacity-65'} rounded-lg flex items-center justify-center`}
+					>
+						<Space className='size-1.25' />
 					</div>
 				</div>
 			</div>

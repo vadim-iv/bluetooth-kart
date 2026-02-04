@@ -1,7 +1,8 @@
+import { MoveVector } from '@/types/control'
 import { useEffect, useState } from 'react'
 
 export function useTiltControl() {
-	const [movement, setMovement] = useState({ x: 0, y: 0 })
+	const [movement, setMovement] = useState<MoveVector>({ x: 0, y: 0, break: 0 })
 
 	useEffect(() => {
 		const handleMotion = (e: DeviceMotionEvent) => {
@@ -31,12 +32,17 @@ export function useTiltControl() {
 		setMovement(m => ({ ...m, y: -100 }))
 
 	const stop = () =>
-		setMovement(m => ({ ...m, y: 0 }))
+		setMovement(m => ({ ...m, y: 0, break: 0 }))
+
+	const breakBtn = () => {
+		setMovement(m => ({ ...m, break: 1 }))
+	}
 
 	return {
 		movement,
 		forward,
 		backward,
-		stop
+		stop,
+		breakBtn
 	}
 }

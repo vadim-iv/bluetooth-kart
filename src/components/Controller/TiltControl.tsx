@@ -47,7 +47,7 @@ function TouchableButton(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
 }
 
 export function TiltControl({ back, characteristic }: TiltControlProps) {
-    const { movement, forward, backward, stop } = useTiltControl()
+    const { movement, forward, backward, stop, breakBtn } = useTiltControl()
 
     useBleMovementSender({
         movement,
@@ -84,6 +84,16 @@ export function TiltControl({ back, characteristic }: TiltControlProps) {
                 </TouchableButton>
 
                 <TouchableButton
+                    onTouchStart={breakBtn}
+                    onTouchEnd={stop}
+                    onMouseDown={breakBtn}
+                    onMouseUp={stop}
+                    className='px-3 py-1 bg-[#ffffff10] hover:bg-[#ffffff20] text-[#ffffff85] rounded-md transition-colors'
+                >
+                    Break
+                </TouchableButton>
+
+                <TouchableButton
                     onTouchStart={backward}
                     onTouchEnd={stop}
                     onMouseDown={backward}
@@ -95,7 +105,7 @@ export function TiltControl({ back, characteristic }: TiltControlProps) {
             </div>
 
             {/* Show x and y */}
-            <p>X: {movement.x} Y: {movement.y}</p>
+            <p>X: {movement.x} Y: {movement.y}, Break: {movement.break}</p>
 
             <div className='flex flex-col items-center gap-1'>
                 <p className='opacity-50 select-none'>Tilt phone to steer, buttons for throttle</p>

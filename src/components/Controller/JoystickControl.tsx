@@ -18,6 +18,8 @@ export function JoystickControl({ back, characteristic }: JoystickControlProps) 
 		characteristic
 	})
 
+	console.log(movement.x, movement.y, movement.break)
+
 	return (
 		<div className='flex flex-col items-center gap-6'>
 			<div className='relative'>
