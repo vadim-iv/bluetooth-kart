@@ -2,7 +2,7 @@ import { MoveVector } from '@/types/control'
 import { useEffect, useRef, useState } from 'react'
 
 const LERP_SPEED = 0.009
-const MAX_Y = 5
+const MAX_Y = 50
 
 export function useTiltControl() {
 	const [movement, setMovement] = useState<MoveVector>({
