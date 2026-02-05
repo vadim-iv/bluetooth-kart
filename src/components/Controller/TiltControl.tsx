@@ -105,7 +105,7 @@ export function TiltControl({ back, characteristic }: TiltControlProps) {
             </div>
 
             {/* Show x and y */}
-            <p>X: {movement.x} Y: {movement.y}, Break: {movement.break}</p>
+            <p>X: {movement.x} Y: {Math.floor(movement.y)}, Break: {Math.floor(movement.break)}</p>
             <p>Sent Command: {sentCommand}</p>
 
             <div className='flex flex-col items-center gap-1'>

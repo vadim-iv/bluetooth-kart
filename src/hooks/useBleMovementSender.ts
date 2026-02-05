@@ -27,7 +27,7 @@ export function useBleMovementSender({
 
     const timer = setInterval(async () => {
       const m = movementRef.current
-      const command = `MOVE:${m.x},${m.y},${m.break}\n`
+      const command = `MOVE:${Math.floor(m.x)},${Math.floor(m.y)},${Math.floor(m.break)}\n`
 
       setSentCommand(command.trim())
 

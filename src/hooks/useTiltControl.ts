@@ -1,42 +1,73 @@
 import { MoveVector } from '@/types/control'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+
+const LERP_SPEED = 0.009
 
 export function useTiltControl() {
-	const [movement, setMovement] = useState<MoveVector>({ x: 0, y: 0, break: 0 })
+	const [movement, setMovement] = useState<MoveVector>({
+		x: 0,
+		y: 0,
+		break: 0
+	})
 
-	console.log('Tilt movement:', movement)
+	const targetY = useRef(0)
 
 	useEffect(() => {
 		const handleMotion = (e: DeviceMotionEvent) => {
 			const x = e.accelerationIncludingGravity?.y ?? 0
 
-
-			// map tilt → steering
 			let steering = Math.round(x * 20)
 			if (Math.abs(steering) < 15) steering = 0
 
 			steering = Math.max(-100, Math.min(100, steering))
 
-			setMovement(m => ({
-				...m,
-				x: steering
-			}))
+			setMovement(m => ({ ...m, x: steering }))
 		}
 
 		window.addEventListener('devicemotion', handleMotion)
 		return () => window.removeEventListener('devicemotion', handleMotion)
 	}, [])
 
-	const forward = () =>
-		setMovement(m => ({ ...m, y: 100 }))
+	/* ================= FORWARD / BACKWARD LERP ================= */
+	useEffect(() => {
+		let rafId: number
 
-	const backward = () =>
-		setMovement(m => ({ ...m, y: -100 }))
+		const update = () => {
+			setMovement(m => {
+				const diff = targetY.current - m.y
+				if (Math.abs(diff) < 0.5) {
+					return { ...m, y: targetY.current }
+				}
 
-	const stop = () =>
-		setMovement(m => ({ ...m, y: 0, break: 0 }))
+				return {
+					...m,
+					y: m.y + diff * LERP_SPEED
+				}
+			})
+
+			rafId = requestAnimationFrame(update)
+		}
+
+		rafId = requestAnimationFrame(update)
+		return () => cancelAnimationFrame(rafId)
+	}, [])
+
+
+	const forward = () => {
+		targetY.current = 100
+	}
+
+	const backward = () => {
+		targetY.current = -100
+	}
+
+	const stop = () => {
+		targetY.current = 0
+		setMovement(m => ({ ...m, break: 0 }))
+	}
 
 	const breakBtn = () => {
+		targetY.current = 0
 		setMovement(m => ({ ...m, break: 1 }))
 	}
 
