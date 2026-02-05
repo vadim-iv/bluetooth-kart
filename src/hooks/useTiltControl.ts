@@ -2,6 +2,7 @@ import { MoveVector } from '@/types/control'
 import { useEffect, useRef, useState } from 'react'
 
 const LERP_SPEED = 0.009
+const MAX_Y = 50
 
 export function useTiltControl() {
 	const [movement, setMovement] = useState<MoveVector>({
@@ -35,14 +36,17 @@ export function useTiltControl() {
 		const update = () => {
 			setMovement(m => {
 				const diff = targetY.current - m.y
+
 				if (Math.abs(diff) < 0.5) {
 					return { ...m, y: targetY.current }
 				}
 
-				return {
-					...m,
-					y: m.y + diff * LERP_SPEED
-				}
+				let nextY = m.y + diff * LERP_SPEED
+
+				// clamp output
+				nextY = Math.max(-MAX_Y, Math.min(MAX_Y, nextY))
+
+				return { ...m, y: nextY }
 			})
 
 			rafId = requestAnimationFrame(update)
@@ -52,13 +56,12 @@ export function useTiltControl() {
 		return () => cancelAnimationFrame(rafId)
 	}, [])
 
-
 	const forward = () => {
-		targetY.current = 100
+		targetY.current = MAX_Y
 	}
 
 	const backward = () => {
-		targetY.current = -100
+		targetY.current = -MAX_Y
 	}
 
 	const stop = () => {
