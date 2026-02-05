@@ -13,12 +13,10 @@ interface JoystickControlProps {
 export function JoystickControl({ back, characteristic }: JoystickControlProps) {
 	const { movement, handleMove, handleStop } = useJoystickControl()
 
-	useBleMovementSender({
+	const { sentCommand } = useBleMovementSender({
 		movement,
 		characteristic
 	})
-
-	console.log(movement.x, movement.y, movement.break)
 
 	return (
 		<div className='flex flex-col items-center gap-6'>
@@ -51,6 +49,7 @@ export function JoystickControl({ back, characteristic }: JoystickControlProps) 
 					/>
 				</div>
 			</div>
+			<p>Sent Command: {sentCommand}</p>
 			<div className='flex flex-col items-center gap-1'>
 				<p className='opacity-50 select-none'>Control the stick using your mouse or touch</p>
 				<button
