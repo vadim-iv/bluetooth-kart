@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { MoveVector } from '@/types/control'
 
 interface Props {
@@ -12,6 +12,7 @@ export function useBleMovementSender({
 	characteristic,
 	intervalMs = 40
 }: Props) {
+	const [ sentCommand, setSentCommand ] = useState<string>('')
 	useEffect(() => {
 		if (!characteristic) return
 
@@ -20,6 +21,8 @@ export function useBleMovementSender({
 		const timer = setInterval(async () => {
 			const command = `MOVE:${movement.x},${movement.y},${movement.break}\n`
 			console.log('Sending BLE command:', command.trim())
+			setSentCommand(command.trim())
+			
 			try {
 				await characteristic.writeValueWithoutResponse(encoder.encode(command))
 			} catch (err) {
@@ -29,4 +32,6 @@ export function useBleMovementSender({
 
 		return () => clearInterval(timer)
 	}, [movement, characteristic, intervalMs])
+
+	return { sentCommand }
 }

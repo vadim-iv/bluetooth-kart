@@ -49,9 +49,9 @@ function TouchableButton(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
 export function TiltControl({ back, characteristic }: TiltControlProps) {
     const { movement, forward, backward, stop, breakBtn } = useTiltControl()
 
-    useBleMovementSender({
+    const { sentCommand } = useBleMovementSender({
         movement,
-        characteristic
+        characteristic,
     })
 
     const requestPermission = async () => {
@@ -106,6 +106,7 @@ export function TiltControl({ back, characteristic }: TiltControlProps) {
 
             {/* Show x and y */}
             <p>X: {movement.x} Y: {movement.y}, Break: {movement.break}</p>
+            <p>Sent Command: {sentCommand}</p>
 
             <div className='flex flex-col items-center gap-1'>
                 <p className='opacity-50 select-none'>Tilt phone to steer, buttons for throttle</p>
