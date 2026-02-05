@@ -1,37 +1,47 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { MoveVector } from '@/types/control'
 
 interface Props {
-	movement: MoveVector
-	characteristic: BluetoothRemoteGATTCharacteristic | null
-	intervalMs?: number
+  movement: MoveVector
+  characteristic: BluetoothRemoteGATTCharacteristic | null
+  intervalMs?: number
 }
 
 export function useBleMovementSender({
-	movement,
-	characteristic,
-	intervalMs = 40
+  movement,
+  characteristic,
+  intervalMs = 40
 }: Props) {
-	const [ sentCommand, setSentCommand ] = useState<string>('')
-	useEffect(() => {
-		if (!characteristic) return
+  const [sentCommand, setSentCommand] = useState('')
+  const movementRef = useRef(movement)
 
-		const encoder = new TextEncoder()
+  // Always keep latest movement
+  useEffect(() => {
+    movementRef.current = movement
+  }, [movement])
 
-		const timer = setInterval(async () => {
-			const command = `MOVE:${movement.x},${movement.y},${movement.break}\n`
-			console.log('Sending BLE command:', command.trim())
-			setSentCommand(command.trim())
-			
-			try {
-				await characteristic.writeValueWithoutResponse(encoder.encode(command))
-			} catch (err) {
-				console.error('BLE send failed', err)
-			}
-		}, intervalMs)
+  useEffect(() => {
+    if (!characteristic) return
 
-		return () => clearInterval(timer)
-	}, [movement, characteristic, intervalMs])
+    const encoder = new TextEncoder()
 
-	return { sentCommand }
+    const timer = setInterval(async () => {
+      const m = movementRef.current
+      const command = `MOVE:${m.x},${m.y},${m.break}\n`
+
+      setSentCommand(command.trim())
+
+      try {
+        await characteristic.writeValueWithoutResponse(
+          encoder.encode(command)
+        )
+      } catch (err) {
+        console.error('BLE send failed', err)
+      }
+    }, intervalMs)
+
+    return () => clearInterval(timer)
+  }, [characteristic, intervalMs])
+
+  return { sentCommand }
 }

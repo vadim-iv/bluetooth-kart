@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 export function useTiltControl() {
 	const [movement, setMovement] = useState<MoveVector>({ x: 0, y: 0, break: 0 })
 
+	console.log('Tilt movement:', movement)
+
 	useEffect(() => {
 		const handleMotion = (e: DeviceMotionEvent) => {
 			const x = e.accelerationIncludingGravity?.y ?? 0
