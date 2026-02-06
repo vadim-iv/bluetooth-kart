@@ -5,13 +5,11 @@ import { Bluetooth } from 'lucide-react'
 import { Controller } from './Controller/Controller'
 
 export function KartControls() {
-	const { connect, isConnecting, characteristic } = useKartBLE({
+	const { connect, isConnecting, characteristic, isConnected } = useKartBLE({
 		deviceName: 'Kart-BLE-7',
 		serviceUUID: '0000ffe0-0000-1000-8000-00805f9b34fb',
 		characteristicUUID: '0000ffe1-0000-1000-8000-00805f9b34fb'
 	})
-
-	const isConnected = true;
 
 	return (
 		<div>
